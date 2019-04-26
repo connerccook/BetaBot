@@ -17,26 +17,37 @@
 const int stepsPerRevolution = 200;  
 
 
-// initialize the stepper library on pins 8 through 11:
+
+// initialize the stepper library on pins 2 to 13, 22, 24, 26, 28:
 Stepper myStepper(stepsPerRevolution, 10, 11, 12, 13); 
 Stepper myStepper2(stepsPerRevolution, 2, 3, 4, 5); 
+Stepper myStepper3(stepsPerRevolution, 6, 7, 8, 9);
+Stepper myStepper4(stepsPerRevolution, 22, 24, 26, 28);  
 
 
 void setup() {
-  pinMode(24,OUTPUT);
+  pinMode(30,OUTPUT); // dc motor
+  
   pinMode(2,OUTPUT);
-  pinMode(3,OUTPUT);
+  pinMode(3,OUTPUT); //motor 1
   pinMode(4,OUTPUT);
   pinMode(5,OUTPUT);
+  
+  pinMode(6,OUTPUT);
+  pinMode(7,OUTPUT);
+  pinMode(8,OUTPUT); //motor 2
+  pinMode(9,OUTPUT);
+  
   pinMode(10,OUTPUT);
   pinMode(11,OUTPUT);
-  pinMode(12,OUTPUT);
+  pinMode(12,OUTPUT); //motor 3
   pinMode(13,OUTPUT);
-  // set the speed at 100 rpm:
-  myStepper.setSpeed(10);
-  myStepper2.setSpeed(10);
-  //myStepper3.setSpeed(100);
- // myStepper4.setSpeed(100);
+  
+  pinMode(22,OUTPUT);
+  pinMode(24,OUTPUT);  //motor 4
+  pinMode(26,OUTPUT);
+  pinMode(28,OUTPUT);
+ 
   
   // initialize the serial port:
   Serial.begin(9600);
@@ -44,19 +55,130 @@ void setup() {
 }
 
 
-void powerBoth(int steps){
+void powerForward(int steps){   //For front and back movements
+
+   // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(100);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(100);
   
   myStepper.step(1);
   myStepper2.step(1);
-//  myStepper3.step(steps);
-  //myStepper4.step(steps);
+  myStepper3.step(1);
+  myStepper4.step(1);
   
   }
 
-void loop() {
-  digitalWrite(24,HIGH);
+  void powerBackward(int steps){   //For front and back movements
 
-  int state;
+   // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(100);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(100);
+  
+  myStepper.step(-1);
+  myStepper2.step(-1);
+  myStepper3.step(-1);
+  myStepper4.step(-1);
+  
+  }
+
+  void powerLeft(int steps){   //function for left turn
+   
+    // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(100);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(100);
+    
+    myStepper.step(-1);
+    myStepper2.step(1);
+    myStepper3.step(-1);
+    myStepper4.step(1);
+  }
+
+   void powerRight(int steps){  //function for right turn
+
+    // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(100);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(100);
+    
+    myStepper.step(1);
+    myStepper2.step(-1);
+    myStepper3.step(1);
+    myStepper4.step(-1);
+  }
+
+  
+   void powerForwardRight(int steps){  //function for forward right turn
+
+    // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(50);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(50);
+    
+    myStepper.step(1);
+    myStepper2.step(1);
+    myStepper3.step(1);
+    myStepper4.step(1);
+  }
+
+void powerForwardLeft(int steps){  //function for forward right turn
+
+    // set the speed at 100 rpm:
+  myStepper.setSpeed(50);
+  myStepper2.setSpeed(100);
+  myStepper3.setSpeed(50);
+  myStepper4.setSpeed(100);
+    
+    myStepper.step(1);
+    myStepper2.step(1);
+    myStepper3.step(1);
+    myStepper4.step(1);
+  }
+
+  void powerBackwardRight(int steps){  //function for forward right turn
+
+    // set the speed at 100 rpm:
+  myStepper.setSpeed(100);
+  myStepper2.setSpeed(50);
+  myStepper3.setSpeed(100);
+  myStepper4.setSpeed(50);
+    
+    myStepper.step(-1);
+    myStepper2.step(-1);
+    myStepper3.step(-1);
+    myStepper4.step(-1);
+  }
+
+  void powerBackwardLeft(int steps){
+    myStepper.setSpeed(50);
+    myStepper2.setSpeed(100);
+    myStepper3.setSpeed(50);
+    myStepper4.setSpeed(100);
+
+      myStepper.step(-1);
+      myStepper2.step(-1);
+      myStepper3.step(-1);
+      myStepper4.step(-1);
+  }
+
+ /* void weaponStart ( ){   //function for toggling weapon
+    
+    
+  }*/
+
+    
+void loop() {
+  digitalWrite(30,HIGH);
+
+  int state, up, down, left, right, weapon, music; // integer variable declaration
+  
   
   if(Serial.available() > 0) // Checks whether data is comming from the serial port
   
@@ -64,33 +186,152 @@ void loop() {
    
     state = Serial.read(); // Reads the data from the serial port
 
-  }
+  }//end of reading data from port
   
 
-    if (state == '0') 
+    if (state == '1')   //Forward 
     {
-   
-      // step one revolution  in one direction:
-      Serial.println("clockwise");
+      Serial.print("Forward On");
       
-      // running both motors forward
-      powerBoth(stepsPerRevolution);
-
-      
-      state = 0;
-    }
+      up = 1;
+    } 
  
-  else if (state == '1') 
+  else if (state == '2') //Forward
     {
-  
-      // step one revolution in the other direction:
-      Serial.println("counterclockwise");
+      Serial.print("Forward Off ");
 
-      // running both motors backward
-      powerBoth(-stepsPerRevolution);
-      
-      state = 0;
+      up = 0;
+
     } 
   
-  //powerBoth(200);
+
+    else if(state == '3')  //Left
+  {
+      Serial.print("Left On");
+
+    left = 1;
+  } 
+
+    else if(state == '4') //Left
+  {
+      Serial.print("Left Off"); 
+
+      left = 0;
+
   }
+  
+    else if(state == '5') //Backward
+  {
+      Serial.print("Backward On");
+
+      down = 1;
+    
+  }
+
+else if(state == '6') //Backward
+  {
+      Serial.print("BackWard Off");
+
+      down = 0;
+  }
+  
+  else if(state == '7') //Weapon
+  {
+      Serial.print("Weapon On");
+
+     
+  weapon = 1;
+  }
+  
+  else if(state == '8') //Weapon
+  {
+      Serial.print("Weapon Off");
+
+
+   weapon = 0;
+  }
+  
+  else if(state == '9') //Right
+  {
+      Serial.print("Right On");
+
+      right = 1;
+  }
+  
+
+  else if(state == '10')  //Right
+  {
+      Serial.print("Right Off");
+
+      right = 0;
+  }
+
+/*
+  else if(state == '11')
+  {
+      Serial.printIn("Music On");
+
+      music = 1;
+  }
+
+  else if(state == '12')
+  {
+      Serial.printIn("Music Off");
+
+     music = 0;
+  }
+
+*/
+
+
+  if(up == 1){
+    
+    powerForward(1); // move forward
+  }
+  
+
+  else if(right == 1){
+    
+    powerRight(1); // move right
+  }
+
+  else if(left == 1){
+    
+    powerLeft(1); // move left
+  }
+
+  else if(down == 1){
+    
+    powerBackward(1); // move backward
+  }
+
+  else if(up == 1 && left == 1){
+
+    powerForwardLeft(1);  // move forward and left
+    }
+
+    else if(up == 1 && right == 1){
+
+      powerForwardRight(1); // move forward and right
+    }
+
+    else if(down == 1 && left == 1){
+
+      powerBackwardLeft(1);  // move backward and left
+    }
+
+    else if(down == 1 && right == 1){
+
+      powerBackwardRight(1); // move backward and right
+    }
+
+  /*else if(weapon == 1){
+    
+    weaponStart();
+   } */
+  
+  } //end of the loop 
+
+
+
+
