@@ -266,23 +266,6 @@ else if(state == '6') //Backward
       right = 0;
   }
 
-/*
-  else if(state == '11')
-  {
-      Serial.printIn("Music On");
-
-      music = 1;
-  }
-
-  else if(state == '12')
-  {
-      Serial.printIn("Music Off");
-
-     music = 0;
-  }
-
-*/
-
 
   if(up == 1){
     
